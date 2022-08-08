@@ -1,21 +1,44 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useEffect} from 'react';
+import TodoList from './components/TodoList';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const axios = require('axios');
+var authors = [];
+var titles = [];
+
+const loadTitle = async () => {
+  try {
+      var response = await axios.get('https://poetrydb.org/title');
+      titles = response.data.titles;
+      console.log('titles:', titles[0]);
+  } catch (error) {
+      console.log(error);
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const loadAuthor = async () => {
+  try {
+      var response = await axios.get('https://poetrydb.org/author');
+      authors = response.data.authors;
+      console.log('author:', authors[0]);
+  } catch (error) {
+      console.log(error);
+  }
+}
+
+const App = () => {
+
+  useEffect(() => {
+    console.log('show');
+    loadAuthor();
+    loadTitle();
+    return () => {
+        console.log('hide');
+    };
+  }, []);
+  
+  return (
+    <TodoList />
+  );
+};
+
+export default App;
